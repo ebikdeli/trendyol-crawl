@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     'account',
     'login',
     'vitrin',
+    'product',
+    'cart',
+    'order',
 ]
 
 
