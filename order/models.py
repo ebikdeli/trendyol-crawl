@@ -1,29 +1,34 @@
-from typing import Iterable, Optional
+from typing import Any
 from django.db import models
 from django.conf import settings
-from django.contrib.sessions.models import Session
 from django.utils.text import slugify
 from django.urls import reverse
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
-import uuid
+from _resources.func import get_random_string
 
 
 class Order(models.Model):
-    order_id = models.UUIDField(verbose_name=_('order_id'), default=uuid.uuid4, editable=False)
+    order_id = models.CharField(verbose_name=_('order_id'), max_length=10, blank=True, editable=False)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              verbose_name=_('user'),
                              related_name='order_user',
                              on_delete=models.CASCADE)
     cart = models.ForeignKey('cart.Cart',
                              verbose_name=_('cart'),
-                             related_name='order_cart')
+                             related_name='order_cart',
+                             on_delete=models.CASCADE)
     items = models.ManyToManyField('cart.CartItem')
     slug = models.SlugField(blank=True, editable=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     is_paid = models.BooleanField(verbose_name=_('is paid'), default=False)
     is_completed = models.BooleanField(default=False)
+    
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        if not self.order_id:
+            self.order_id = get_random_string(length=6)
     
     def save(self, *args, **kwargs) -> None:
         self.slug = slugify(self.order_id)
