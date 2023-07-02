@@ -30,7 +30,8 @@ class Cart(models.Model):
     def __str__(self):
         return f"Cart - {self.user.username if self.user else self.session.session_key}"
 
-    def get_total_price(self):
+    @property
+    def total_price(self):
         total_price = self.cart_items.aggregate(total=models.Sum(models.F('quantity') * models.F('product__price')))['total']
         return total_price or 0
 
@@ -77,8 +78,8 @@ class CartItem(models.Model):
         verbose_name_plural = 'CartItem'
     
     @property
-    def get_item_price(self):
-        return self.product.price * self.quantity
+    def price(self):
+        return (self.product.price - self.product.discount) * self.quantity
 
     def __str__(self):
         return f"{self.product.name} ({self.quantity})"

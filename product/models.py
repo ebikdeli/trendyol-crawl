@@ -58,9 +58,9 @@ class Product(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True, verbose_name=_('is active'))
-    quantity_available = models.PositiveIntegerField(default=0,
-                                                     verbose_name=_('quantity available'),
-                                                     validators=[MinValueValidator(0)])
+    # quantity_available = models.PositiveIntegerField(default=0,
+    #                                                  verbose_name=_('quantity available'),
+    #                                                  validators=[MinValueValidator(0)])
 
     class Meta:
         verbose_name = 'Product'
@@ -73,9 +73,13 @@ class Product(models.Model):
     def __str__(self):
         return self.name
     
-    def reduce_quantity(self, quantity):
-        if self.quantity_available >= quantity:
-            self.quantity_available -= quantity
-            self.save()
-            return True
-        return False
+    # def reduce_quantity(self, quantity):
+    #     if self.quantity_available >= quantity:
+    #         self.quantity_available -= quantity
+    #         self.save()
+    #         return True
+    #     return False
+    
+    # def increase_quantity(self, quantity):
+    #     self.quantity_available += quantity
+    #     self.save()

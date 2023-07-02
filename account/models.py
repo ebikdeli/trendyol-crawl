@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from django.core.validators import MaxValueValidator, MinValueValidator, MaxLengthValidator, MinLengthValidator
 from sorl.thumbnail import ImageField
 
-# from order.models import Order
+from order.models import Order
 
 
 class MyUserManager(BaseUserManager):
@@ -109,18 +109,22 @@ class User(AbstractBaseUser, PermissionsMixin):
                                        choices=USER_DB_BACKEND_CHOICES)
     
     USERNAME_FIELD = 'username'
+    
+    class Meta:
+        verbose_name = 'User'
+        verbose_name_plural = 'User'
 
     def __str__(self) -> str:
         return self.username
     
-    # @property
-    # def orders(self):
-    #     """Get all current user orders"""
-    #     # print(self.cart_user.first().order_cart.all())
-    #     order_qs = Order.objects.none()
-    #     for cart in self.cart_user.all():
-    #         order_qs = (order_qs | cart.order_cart.all()).distinct()
-    #     return order_qs
+    @property
+    def orders(self):
+        """Get all current user orders"""
+        # print(self.cart_user.first().order_cart.all())
+        order_qs = Order.objects.none()
+        for cart in self.cart_user.all():
+            order_qs = (order_qs | cart.order_cart.all()).distinct()
+        return order_qs
 
 
 class Address(models.Model):
@@ -143,6 +147,8 @@ class Address(models.Model):
     updated = models.DateTimeField(auto_now=True, verbose_name=_('updated'))
 
     class Meta:
+        verbose_name = 'Address'
+        verbose_name_plural = 'Address'
         ordering = ('-updated',)
 
     def __str__(self):
